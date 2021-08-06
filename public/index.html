@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>TOTP with your password manager that doesn't support TOTP 😅</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/bulma.min.css">
+</head>
+<body class="section">
+  <div class="container is-max-desktop has-text-centered">
+    <h1 class="title is-3 mb-6">TOTP with your password manager that doesn't support TOTP 😅</h1>
+    <form class="m-auto" id="form" style="display: table">
+      <div class="field has-addons">
+        <div class="control">
+          <button class="button" name="scan" type="button">Scan code 🤳</button>
+          <button class="button is-danger is-hidden" name="cancel" type="button">Cancel</button>
+        </div>
+        <div class="control">
+          <input class="input" type="password" name="password" placeholder="TOTP secret">
+        </div>
+        <div class="control">
+          <button class="button is-info" name="submit" type="submit">Get TOTP! 🚀</button>
+        </div>
+      </div>
+    </form>
+    <div class="mt-5 is-hidden" id="result">
+      Your code is <input class="input is-inline" id="code"></span>. Copied to clipboard! 🎉
+    </div>
+    <div class="mt-2 is-hidden" id="preview">
+      <video class="is-block m-auto"></video>
+    </div>
+    <h2 class="title is-4 mt-6">How to use this? 🤔</h2>
+    <div class="content">
+      <ul>
+        <li>Scan TOTP QR code or paste plaintext TOTP secret</li>
+        <li>Submit so you can save the TOTP secret in your password manager</li>
+        <li><strong>Tip:</strong> use the username field to give it a meaningful name</li>
+        <li>When you come back, focus the password field to select amongst all the secrets you saved</li>
+        <li>Profit 😎</li>
+      </ul>
+    </div>
+    <h2 class="title is-4">Do you steal my secrets? 😱</h2>
+    <div class="content">
+      <details>
+        <summary><strong>No.</strong></summary>
+        <div class="message is-info mt-4">
+          <div class="message-body has-text-left">
+            <p>This works by tricking your password manager into saving your TOTP secrets as if they were user passwords on this domain.</p>
+            <p>We use the secret that you input by scanning a QR code or using your password manager autofill to generate a one-time password on your request.</p>
+            <p>The secret never leaves your browser.</p>
+          </div>
+        </div>
+      </details>
+    </div>
+    <h2 class="title is-4">View the code on GitHub!</h2>
+    <div class="content">
+      <p><strong><a href="https://github.com/valeriangalliat/totp">I love viewing the code! 😍</a></strong></p>
+    </div>
+  </div>
+  <script src="main.js"></script>
+</body>
+</html>
