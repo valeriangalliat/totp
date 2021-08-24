@@ -11,7 +11,7 @@ const result = document.getElementById('result')
 const error = document.getElementById('error')
 const resultCode = document.getElementById('code')
 const dropzone = document.getElementById('dropzone')
-const { password, submit, scanCode, scanImage, file, cancel } = form.elements
+const { username, password, scanCode, scanImage, file, cancel } = form.elements
 
 function generateCode () {
   const code = totp(password.value)
@@ -24,12 +24,10 @@ function generateCode () {
 }
 
 function handleTotpUrl (url) {
-  const secret = new URLSearchParams(new URL(url).search).get('secret')
+  const search = new URLSearchParams(new URL(url).search)
 
-  password.value = secret
-
-  // Don't call `form.submit()` because it wouldn't trigger the event listener.
-  submit.click()
+  username.value = search.get('issuer')
+  password.value = search.get('secret')
 }
 
 function handleFile (file) {
@@ -47,10 +45,6 @@ function handleFile (file) {
 
 form.addEventListener('submit', e => {
   e.preventDefault()
-  generateCode()
-})
-
-password.addEventListener('change', () => {
   generateCode()
 })
 
