@@ -1,5 +1,6 @@
 const QrScanner = require('qr-scanner')
 const totp = require('totp-generator')
+const dragDrop = require('drag-drop')
 
 QrScanner.WORKER_PATH = '/qr-scanner-worker.min.js'
 
@@ -8,7 +9,8 @@ const previewVideo = preview.querySelector('video')
 const form = document.getElementById('form')
 const result = document.getElementById('result')
 const resultCode = document.getElementById('code')
-const { password, submit, scan, cancel } = form.elements
+const dropzone = document.getElementById('dropzone')
+const { password, submit, scanCode, scanImage, file, cancel } = form.elements
 
 function generateCode () {
   const code = totp(password.value)
@@ -18,6 +20,19 @@ function generateCode () {
   resultCode.value = code
   resultCode.select()
   navigator.clipboard.writeText(code)
+}
+
+function handleTotpUrl (url) {
+  const secret = new URLSearchParams(new URL(url).search).get('secret')
+
+  password.value = secret
+
+  // Don't call `form.submit()` because it wouldn't trigger the event listener.
+  submit.click()
+}
+
+async function handleFile (file) {
+  handleTotpUrl(await QrScanner.scanImage(file))
 }
 
 form.addEventListener('submit', e => {
@@ -30,36 +45,39 @@ password.addEventListener('change', () => {
 })
 
 const qrScanner = new QrScanner(previewVideo, result => {
-  scan.classList.remove('is-hidden')
+  scanCode.classList.remove('is-hidden')
   cancel.classList.add('is-hidden')
   preview.classList.add('is-hidden')
   qrScanner.stop()
-
-  const secret = new URLSearchParams(new URL(result).search).get('secret')
-
-  password.value = secret
-
-  // Don't call `form.submit()` because it wouldn't trigger the event listener.
-  submit.click()
+  handleTotpUrl(result)
 })
 
 // Force width to avoid pixel shift with rounding.
-scan.style.width = `${scan.offsetWidth}px`
+scanCode.style.width = `${scanCode.offsetWidth}px`
 
-scan.addEventListener('click', e => {
+scanCode.addEventListener('click', e => {
   e.preventDefault()
-  cancel.style.width = `${scan.offsetWidth}px`
+  cancel.style.width = `${scanCode.offsetWidth}px`
   previewVideo.width = form.offsetWidth
-  scan.classList.add('is-hidden')
+  scanCode.classList.add('is-hidden')
   cancel.classList.remove('is-hidden')
   result.classList.add('is-hidden')
   preview.classList.remove('is-hidden')
   qrScanner.start()
 })
 
+scanImage.addEventListener('click', e => {
+  e.preventDefault()
+  file.click()
+})
+
+file.addEventListener('change', () => {
+  handleFile(file.files[0])
+})
+
 cancel.addEventListener('click', e => {
   e.preventDefault()
-  scan.classList.remove('is-hidden')
+  scanCode.classList.remove('is-hidden')
   cancel.classList.add('is-hidden')
   preview.classList.add('is-hidden')
   qrScanner.stop()
@@ -67,4 +85,16 @@ cancel.addEventListener('click', e => {
 
 resultCode.addEventListener('click', e => {
   resultCode.select()
+})
+
+dragDrop('body', {
+  onDrop (files) {
+    handleFile(files[0])
+  },
+  onDragEnter (event) {
+    dropzone.classList.remove('is-hidden')
+  },
+  onDragLeave (event) {
+    dropzone.classList.add('is-hidden')
+  }
 })

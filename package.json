@@ -1,12 +1,13 @@
 {
   "scripts": {
-    "build": "cp node_modules/bulma/css/bulma.min.css public && cp node_modules/qr-scanner/qr-scanner-worker.min.js public && browserify main.js -o public/main.js",
+    "build": "make && browserify main.js -o public/main.js",
     "watch": "watchify main.js -o public/main.js",
     "lint": "standard --fix"
   },
   "dependencies": {
     "browserify": "^17.0.0",
     "bulma": "^0.9.3",
+    "drag-drop": "^7.2.0",
     "qr-scanner": "^1.2.0",
     "totp-generator": "^0.0.9"
   },

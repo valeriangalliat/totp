@@ -5,6 +5,7 @@
   <title>TOTP with your password manager that doesn't support TOTP 😅</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="/bulma.min.css">
+  <link rel="stylesheet" href="/main.css">
 </head>
 <body class="section">
   <div class="container is-max-desktop has-text-centered">
@@ -12,8 +13,12 @@
     <form class="m-auto" id="form" style="display: table">
       <div class="field has-addons">
         <div class="control">
-          <button class="button" name="scan" type="button">Scan code 🤳</button>
+          <button class="button" name="scanCode" type="button">Scan code 🤳</button>
           <button class="button is-danger is-hidden" name="cancel" type="button">Cancel</button>
+        </div>
+        <div class="control">
+          <input class="is-hidden" name="file" type="file">
+          <button class="button" name="scanImage" type="button">Scan image 🖼</button>
         </div>
         <div class="control">
           <input class="input" type="password" name="password" placeholder="TOTP secret">
@@ -57,6 +62,7 @@
       <p><strong><a href="https://github.com/valeriangalliat/totp">I love viewing the code! 😍</a></strong></p>
     </div>
   </div>
+  <div class="dropzone is-hidden" id="dropzone"></div>
   <script src="main.js"></script>
 </body>
 </html>
