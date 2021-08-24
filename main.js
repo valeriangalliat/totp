@@ -8,6 +8,7 @@ const preview = document.getElementById('preview')
 const previewVideo = preview.querySelector('video')
 const form = document.getElementById('form')
 const result = document.getElementById('result')
+const error = document.getElementById('error')
 const resultCode = document.getElementById('code')
 const dropzone = document.getElementById('dropzone')
 const { password, submit, scanCode, scanImage, file, cancel } = form.elements
@@ -31,8 +32,17 @@ function handleTotpUrl (url) {
   submit.click()
 }
 
-async function handleFile (file) {
-  handleTotpUrl(await QrScanner.scanImage(file))
+function handleFile (file) {
+  QrScanner.scanImage(file)
+    .then(result => {
+      error.classList.add('is-hidden')
+      handleTotpUrl(result)
+    })
+    .catch(err => {
+      console.error(err)
+      result.classList.add('is-hidden')
+      error.classList.remove('is-hidden')
+    })
 }
 
 form.addEventListener('submit', e => {
@@ -48,6 +58,7 @@ const qrScanner = new QrScanner(previewVideo, result => {
   scanCode.classList.remove('is-hidden')
   cancel.classList.add('is-hidden')
   preview.classList.add('is-hidden')
+  error.classList.add('is-hidden')
   qrScanner.stop()
   handleTotpUrl(result)
 })
