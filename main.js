@@ -7,14 +7,69 @@ QrScanner.WORKER_PATH = '/qr-scanner-worker.min.js'
 const preview = document.getElementById('preview')
 const previewVideo = preview.querySelector('video')
 const form = document.getElementById('form')
+const formDetails = document.getElementById('form-details')
 const result = document.getElementById('result')
 const error = document.getElementById('error')
 const resultCode = document.getElementById('code')
 const dropzone = document.getElementById('dropzone')
-const { username, password, scanCode, scanImage, file, cancel } = form.elements
+const { username, password, scanCode, scanImage, showDetails, file, cancel } = form.elements
+const { secret, algorithm, digits, period, authyMode, resetDefaults } = formDetails.elements
+
+function updatePasswordFromDetails () {
+  if (!password.value.startsWith('otpauth://')) {
+    const search = new URLSearchParams()
+    search.set('secret', secret.value)
+    search.set('algorithm', algorithm.value)
+    search.set('digits', digits.value)
+    search.set('period', period.value)
+
+    password.value = `otpauth://totp/${username.value}?${search}`
+    return
+  }
+
+  const url = new URL(password.value)
+  const search = new URLSearchParams(url.search)
+
+  search.set('secret', secret.value)
+  search.set('algorithm', algorithm.value)
+  search.set('digits', digits.value)
+  search.set('period', period.value)
+
+  url.search = search
+  password.value = url.toString()
+}
+
+function updateDetailsFromPassword () {
+  if (!password.value.startsWith('otpauth://')) {
+    secret.value = password.value
+    algorithm.value = 'SHA-1'
+    digits.value = 6
+    period.value = 30
+    return
+  }
+
+  const search = new URLSearchParams(new URL(password.value).search)
+
+  secret.value = search.get('secret')
+  algorithm.value = search.get('algorithm') || 'SHA-1'
+  digits.value = search.get('digits') || 6
+  period.value = search.get('period') || 30
+}
+
+function totpFromUrlOrSecret (value) {
+  if (!value.startsWith('otpauth://')) {
+    // Directly the secret, use default options.
+    return totp(value)
+  }
+
+  const search = new URLSearchParams(new URL(value).search)
+  const { secret, algorithm, digits, period } = Object.fromEntries(search)
+
+  return totp(secret, { algorithm, digits, period })
+}
 
 function generateCode () {
-  const code = totp(password.value)
+  const code = totpFromUrlOrSecret(password.value)
   result.classList.remove('is-hidden')
   result.style.lineHeight = `${resultCode.offsetHeight}px`
   resultCode.size = code.length - 2 // Not sure why but this fits perfectly.
@@ -27,7 +82,8 @@ function handleTotpUrl (url) {
   const search = new URLSearchParams(new URL(url).search)
 
   username.value = search.get('issuer')
-  password.value = search.get('secret')
+  password.value = url
+  updateDetailsFromPassword()
 }
 
 function handleFile (file) {
@@ -60,6 +116,8 @@ const qrScanner = new QrScanner(previewVideo, result => {
 // Force width to avoid pixel shift with rounding.
 scanCode.style.width = `${scanCode.offsetWidth}px`
 
+password.addEventListener('change', updateDetailsFromPassword)
+
 scanCode.addEventListener('click', e => {
   e.preventDefault()
   cancel.style.width = `${scanCode.offsetWidth}px`
@@ -80,6 +138,12 @@ file.addEventListener('change', () => {
   handleFile(file.files[0])
 })
 
+showDetails.addEventListener('click', e => {
+  e.preventDefault()
+  updateDetailsFromPassword()
+  formDetails.classList.toggle('is-hidden')
+})
+
 cancel.addEventListener('click', e => {
   e.preventDefault()
   scanCode.classList.remove('is-hidden')
@@ -90,6 +154,25 @@ cancel.addEventListener('click', e => {
 
 resultCode.addEventListener('click', e => {
   resultCode.select()
+})
+
+secret.addEventListener('change', updatePasswordFromDetails)
+algorithm.addEventListener('change', updatePasswordFromDetails)
+digits.addEventListener('change', updatePasswordFromDetails)
+period.addEventListener('change', updatePasswordFromDetails)
+
+authyMode.addEventListener('click', e => {
+  algorithm.value = 'SHA-1'
+  digits.value = 7
+  period.value = 10
+  updatePasswordFromDetails()
+})
+
+resetDefaults.addEventListener('click', e => {
+  algorithm.value = 'SHA-1'
+  digits.value = 6
+  period.value = 30
+  updatePasswordFromDetails()
 })
 
 dragDrop('body', {

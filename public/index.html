@@ -14,7 +14,7 @@
 <body class="section">
   <div class="container is-max-desktop has-text-centered">
     <h1 class="title is-3 mb-6">TOTP with a password manager that doesn't support TOTP 😅</h1>
-    <form class="m-auto" id="form" style="display: table">
+    <form class="is-table mx-auto" id="form">
       <div class="field has-addons">
         <div class="control">
           <button class="button" name="scanCode" type="button">Scan code 🤳</button>
@@ -28,10 +28,57 @@
           <input class="input" type="text" name="username" placeholder="Service" size="12" autocomplete="off">
         </div>
         <div class="control">
-          <input class="input" type="password" name="password" placeholder="TOTP secret" size="12" autocomplete="off">
+          <input class="input" type="password" name="password" placeholder="TOTP params" size="12" autocomplete="off">
+        </div>
+        <div class="control">
+          <button class="button" name="showDetails" type="button">🍔</button>
         </div>
         <div class="control">
           <button class="button is-info" type="submit">Get TOTP! 🚀</button>
+        </div>
+      </div>
+    </form>
+    <form class="is-hidden is-table mt-5 mx-auto has-text-left" id="form-details">
+      <div class="is-flex">
+        <div class="field">
+          <label class="label">Secret</label>
+          <div class="control">
+            <input class="input" type="text" name="secret" size="12" autocomplete="off">
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Algorithm</label>
+          <div class="control">
+            <select class="input" name="algorithm">
+              <option value="SHA-1">SHA-1</option>
+              <option value="SHA-224">SHA-224</option>
+              <option value="SHA-256">SHA-256</option>
+              <option value="SHA-384">SHA-384</option>
+              <option value="SHA-512">SHA-512</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Digits</label>
+          <div class="control">
+            <input class="input" type="number" name="digits" value="6" size="1" autocomplete="off">
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Period</label>
+          <div class="control">
+            <input class="input" type="number" name="period" value="30" size="1" autocomplete="off">
+          </div>
+        </div>
+        <div class="field has-no-label">
+          <div class="control">
+            <button class="button is-danger" name="authyMode" type="button">Authy</button>
+          </div>
+        </div>
+        <div class="field has-no-label">
+          <div class="control">
+            <button class="button is-success" name="resetDefaults" type="button">Reset</button>
+          </div>
         </div>
       </div>
     </form>
@@ -48,7 +95,7 @@
     <div class="content">
       <ul>
         <li>Scan TOTP QR code or paste plaintext TOTP secret</li>
-        <li>Submit so you can save the TOTP secret in your password manager</li>
+        <li>Submit so you can save the TOTP params in your password manager</li>
         <li><strong>Tip:</strong> use the username field to give it a meaningful name</li>
         <li>When you come back, focus the password field to select amongst all the secrets you saved</li>
         <li>Profit 😎</li>
