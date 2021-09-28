@@ -106,7 +106,7 @@
       <details>
         <summary><strong>No.</strong></summary>
         <div class="message is-info mt-4">
-          <div class="message-body has-text-left">
+          <div class="message-body">
             <p>This works by tricking your password manager into saving your TOTP secrets as if they were user passwords on this domain.</p>
             <p>We use the secret that you input by scanning a QR code or using your password manager autofill to generate a one-time password on your request.</p>
             <p>The secret never leaves your browser.</p>
@@ -117,6 +117,19 @@
     <h2 class="title is-4">View the code on GitHub!</h2>
     <div class="content">
       <p><strong><a href="https://github.com/valeriangalliat/totp">I love viewing the code! 😍</a></strong></p>
+    </div>
+    <h2 class="title is-4">Bonus: replacing Authy</h2>
+    <div class="content">
+      <details>
+        <summary>See the magic.</summary>
+        <div class="message is-info mt-4">
+          <div class="message-body">
+            <p>Use <a href="https://github.com/valeriangalliat/authy-user-client">this cool program</a> to dump your Authy codes as standard TOTP URLs.</p>
+            <p>You can paste them above like any other TOTP secret.</p>
+            <p><strong>Pro tip:</strong> click the hamburger menu 🍔 to see (and modify) the detailed TOTP parameters.</p>
+          </div>
+        </div>
+      </details>
     </div>
   </div>
   <div class="dropzone is-hidden" id="dropzone"></div>
