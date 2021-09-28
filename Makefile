@@ -5,3 +5,6 @@ public/bulma.min.css: node_modules/bulma/css/bulma.min.css node_modules/bulma-re
 
 public/qr-scanner-worker.min.js: node_modules/qr-scanner/qr-scanner-worker.min.js
 	cp $< $@
+
+serve:
+	cd public && python3 -m http.server 8888

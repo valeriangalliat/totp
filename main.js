@@ -16,27 +16,16 @@ const { username, password, scanCode, scanImage, showDetails, file, cancel } = f
 const { secret, algorithm, digits, period, authyMode, resetDefaults } = formDetails.elements
 
 function updatePasswordFromDetails () {
-  if (!password.value.startsWith('otpauth://')) {
-    const search = new URLSearchParams()
-    search.set('secret', secret.value)
-    search.set('algorithm', algorithm.value)
-    search.set('digits', digits.value)
-    search.set('period', period.value)
-
-    password.value = `otpauth://totp/${username.value}?${search}`
-    return
-  }
-
-  const url = new URL(password.value)
-  const search = new URLSearchParams(url.search)
+  const uri = new URL(password.value.startsWith('otpauth://') ? password.value : `otpauth://totp/${encodeURIComponent(username.value)}`)
+  const search = new URLSearchParams(uri.search)
 
   search.set('secret', secret.value)
   search.set('algorithm', algorithm.value)
   search.set('digits', digits.value)
   search.set('period', period.value)
 
-  url.search = search
-  password.value = url.toString()
+  uri.search = search
+  password.value = uri.toString()
 }
 
 function updateDetailsFromPassword () {
@@ -56,7 +45,7 @@ function updateDetailsFromPassword () {
   period.value = search.get('period') || 30
 }
 
-function totpFromUrlOrSecret (value) {
+function totpFromUriOrSecret (value) {
   if (!value.startsWith('otpauth://')) {
     // Directly the secret, use default options.
     return totp(value)
@@ -69,7 +58,7 @@ function totpFromUrlOrSecret (value) {
 }
 
 function generateCode () {
-  const code = totpFromUrlOrSecret(password.value)
+  const code = totpFromUriOrSecret(password.value)
   result.classList.remove('is-hidden')
   result.style.lineHeight = `${resultCode.offsetHeight}px`
   resultCode.size = code.length - 2 // Not sure why but this fits perfectly.
@@ -78,11 +67,11 @@ function generateCode () {
   navigator.clipboard.writeText(code)
 }
 
-function handleTotpUrl (url) {
-  const search = new URLSearchParams(new URL(url).search)
+function handleTotpUri (uri) {
+  const search = new URLSearchParams(new URL(uri).search)
 
   username.value = search.get('issuer')
-  password.value = url
+  password.value = uri
   updateDetailsFromPassword()
 }
 
@@ -90,7 +79,7 @@ function handleFile (file) {
   QrScanner.scanImage(file)
     .then(result => {
       error.classList.add('is-hidden')
-      handleTotpUrl(result)
+      handleTotpUri(result)
     })
     .catch(err => {
       console.error(err)
@@ -110,7 +99,7 @@ const qrScanner = new QrScanner(previewVideo, result => {
   preview.classList.add('is-hidden')
   error.classList.add('is-hidden')
   qrScanner.stop()
-  handleTotpUrl(result)
+  handleTotpUri(result)
 })
 
 // Force width to avoid pixel shift with rounding.
