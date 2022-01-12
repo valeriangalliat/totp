@@ -42,7 +42,7 @@ function updateDetailsFromPassword () {
   const search = new URLSearchParams(new URL(password.value).search)
 
   secret.value = search.get('secret')
-  algorithm.value = search.get('algorithm') || 'SHA-1'
+  algorithm.value = (search.get('algorithm') || 'SHA-1').replace(/^SHA(\d+)$/i, 'SHA-$1')
   digits.value = search.get('digits') || 6
   period.value = search.get('period') || 30
 }
@@ -54,7 +54,10 @@ function totpFromUriOrSecret (value) {
   }
 
   const search = new URLSearchParams(new URL(value).search)
-  const { secret, algorithm, digits, period } = Object.fromEntries(search)
+  let { secret, algorithm, digits, period } = Object.fromEntries(search)
+
+  // Some providers give `SHA1` but `jssha` expects `SHA-1`.
+  algorithm = algorithm.replace(/^SHA(\d+)$/i, 'SHA-$1')
 
   return totp(secret, { algorithm, digits, period })
 }
