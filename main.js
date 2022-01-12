@@ -1,3 +1,5 @@
+/* eslint-env browser */
+
 const QrScanner = require('qr-scanner')
 const totp = require('totp-generator')
 const dragDrop = require('drag-drop')
@@ -174,4 +176,12 @@ dragDrop('body', {
   onDragLeave (event) {
     dropzone.classList.add('is-hidden')
   }
+})
+
+addEventListener('paste', e => {
+  if (e.clipboardData.items.length <= 0) {
+    return
+  }
+
+  handleFile(e.clipboardData.items[0].getAsFile())
 })
