@@ -56,8 +56,10 @@ function totpFromUriOrSecret (value) {
   const search = new URLSearchParams(new URL(value).search)
   let { secret, algorithm, digits, period } = Object.fromEntries(search)
 
-  // Some providers give `SHA1` but `jssha` expects `SHA-1`.
-  algorithm = algorithm.replace(/^SHA(\d+)$/i, 'SHA-$1')
+  if (algorithm) {
+    // Some providers give `SHA1` but `jssha` expects `SHA-1`.
+    algorithm = algorithm.replace(/^SHA(\d+)$/i, 'SHA-$1')
+  }
 
   return totp(secret, { algorithm, digits, period })
 }
