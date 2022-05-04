@@ -1,6 +1,6 @@
 # TOTP with a password manager that doesn't support TOTP 😅
 
-> [See it live! 🐿](https://totp.vercel.app/)
+> [See it live! 🐿️](https://totp.vercel.app/)
 
 ## Overview
 
